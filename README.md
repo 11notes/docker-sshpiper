@@ -3,7 +3,7 @@
 The rest plugin for sshpiperd is a simple plugin that allows you to use a restful backend for authentication and challenge
 
 The rest_challenge plugin will get a challenge from your rest backend and present it to the user
-The rest_auth plugin will get the upstream/downstram configuration from your rest backend
+The rest_auth plugin will get the upstream/downstream configuration from your rest backend
 
 Since the challenge backend is based on your rest webserver, you can add anything you like, from authenticators, sms, OTP, and so on. No need to use any other plugins.
 
