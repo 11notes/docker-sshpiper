@@ -1,9 +1,8 @@
 #!/bin/ash
-set -eo pipefail
+  if [ -z "$SSHPIPERD_SERVER_KEY" ]; then
+    if [ ! -f /etc/ssh/ssh_host_ed25519_key ];then
+        ssh-keygen -t ed25519 -N '' -f /etc/ssh/ssh_host_ed25519_key
+    fi
+  fi
 
-if [ -z "${SSHPIPERD_SERVER_KEY}" ]; then
-    SSHPIPERD_SERVER_KEY=/sshpiderd/etc/ssh_host_rsa_key
-    ssh-keygen -t rsa -N '' -f ${SSHPIPERD_SERVER_KEY}
-fi
-
-exec "$@"
+  exec "$@"

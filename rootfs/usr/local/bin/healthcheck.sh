@@ -1,2 +1,2 @@
 #!/bin/ash
-curl --fail -v telnet://localhost:2222
+  curl --fail -v telnet://localhost:2222
