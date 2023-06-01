@@ -16,33 +16,39 @@ sshpiperd rest_challenge --url https://localhost:8443/challenge --insecure  -- r
 ### options
 
 ```
-   --url value URL for your rest endpoint
+   --url value URL for your rest endpoint, can be anything you like
    --insecure  allow insecure SSL
 ```
 
-## Config example
+## challenge backend: GET URL/user (GET https://localhost:8443/challenge/arthur)
 
 ```json
-# challenge backend
-GET URL/user (GET https://localhost:8443/challenge/arthur)
 {
   "message":"What is the airspeed velocity of an unladen swallow?"
 }
-POST URL/user (POST https://localhost:8443/challenge/arthur)
+```
+
+## challenge backend: POST URL/user (POST https://localhost:8443/challenge/arthur)
+
+```json
 {
   "remoteAddr":"IP and Port of client",
   "uuid":"uniqueID of sshpiperd",
   "response":"response of the client (keyboard interactive)"
 }
+```
 
-# skip challenge backend
-GET URL/user (GET https://localhost:8443/challenge/arthur)
+## skip challenge backend: GET URL/user (GET https://localhost:8443/challenge/arthur)
+
+```json
 {
   "challenge":false
 }
+```
 
-# authentication backend
-GET URL/user (GET https://localhost:8443/auth/arthur)
+## authentication backend: GET URL/user (GET https://localhost:8443/auth/arthur)
+
+```json
 {
   "user": "root",
   "host": "192.168.1.1:22",
