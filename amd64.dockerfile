@@ -18,8 +18,6 @@
     go get github.com/fatih/color; \
     rm -rf /go/sshpiper/plugin/kubernetes; \
     rm -rf /go/sshpiper/plugin/workingdir; \
-    #sed -i "s/\/\/go:build full || e2e//g" /go/sshpiper/plugin/yaml/yaml.go; \
-    #sed -i "s/\/\/go:build full || e2e//g" /go/sshpiper/plugin/yaml/main.go; \
     go build -o /usr/local/bin ./cmd/...; \
     go build -o /usr/local/bin ./plugin/...;
 
