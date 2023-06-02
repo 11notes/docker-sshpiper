@@ -53,6 +53,13 @@ The user types his response and after hitting enter the plugin will send a post 
 }
 ```
 
+The response is either true or false
+```json
+{
+  "auth":true
+}
+```
+
 ## skip challenge backend: GET https://localhost:8443/challenge/arthur
 
 You can skip the challenge for a specific connection if you like. For that, instead of sending back the “message” at the first request, just send back the following data.
@@ -84,3 +91,20 @@ To get the upstream/downstream configuration for the user, your endpoint has to 
 | `host` | IP:Port of the upstream server | *10.0.0.125:22*, *192.168.1.10:678* |
 | `authorizedKeys` | A list of authorized downstream public keys (can be multiple use \r\n) | *ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AA........* |
 | `privateKey` | The private key for the upstream connection | *-----BEGIN OPENSSH PRIVATE KEY-----\r\nb3BlbnNz.....* |
+
+
+# express example
+```js
+...
+app.get('/:user', (req, res, next) => {
+  res.json({hello:`Hi ${req.params.user}, what is the airspeed velocity of an unladen swallow?`});
+});
+app.post('/:user', (req, res, next) => {
+  if(/20\.1mph|20\.1|20|32.35kmh|32.35|32/i.test(req.body.response)){
+    res.json({auth:true});
+  }else{
+    res.json({auth:false});
+  }
+});
+...
+```
