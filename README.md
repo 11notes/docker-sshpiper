@@ -108,3 +108,22 @@ app.post('/:user', (req, res, next) => {
 });
 ...
 ```
+
+# possible high-available solution
+
+This is a possible scenario on how to implement a high-available sshpiper infrastructure (running on multiple nodes). As LB you could use haproxy or traefik, both using sticky sessions for the sshpiper part.
+
+```mermaid
+flowchart TD
+    A[WAN] -->|:22| B(LB HA pair)
+    B -->|:22| C(sshpiper #1)
+    B -->|:22| D(sshpiper #2)
+    B -->|:22| E(sshpiper #n)
+    C -->|:8443| F(LB HA pair)
+    D -->|:8443| F(LB HA pair)
+    E -->|:8443| F(LB HA pair)
+    F -->|:8443| G(REST #1)
+    F -->|:8443| H(REST #2)
+    F -->|:8443| I(REST #n)
+    E -->|:22| J(destination server)
+```
