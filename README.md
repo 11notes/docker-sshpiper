@@ -115,15 +115,21 @@ This is a possible scenario on how to implement a high-available sshpiper infras
 
 ```mermaid
 flowchart TD
-    A[WAN] -->|:22| B(LB HA pair)
-    B -->|:22| C(sshpiper #1)
-    B -->|:22| D(sshpiper #2)
-    B -->|:22| E(sshpiper #n)
-    C -->|:8443| F(LB HA pair)
+    A[WAN]:::WAN -->|:22| B(LB HA pair):::LB
+    B -->|:22| C(sshpiper #1):::SSH
+    B -->|:22| D(sshpiper #2):::SSH
+    B -->|:22| E(sshpiper #n):::SSH
+    C -->|:8443| F(LB HA pair):::LB
     D -->|:8443| F(LB HA pair)
     E -->|:8443| F(LB HA pair)
-    F -->|:8443| G(REST #1)
-    F -->|:8443| H(REST #2)
-    F -->|:8443| I(REST #n)
-    E -->|:22| J(destination server)
+    F -->|:8443| G(REST #1):::REST
+    F -->|:8443| H(REST #2):::REST
+    F -->|:8443| I(REST #n):::REST
+    E -->|:22| J(destination server):::DESTINATION
+
+    classDef WAN fill:#FF0000,stroke:none,color#FFF
+    classDef LB fill:#0099CC,stroke:none,color:#FFF
+    classDef SSH fill:#00CC33,stroke:none,color:#FFF
+    classDef REST fill:#9900CC,stroke:none,color:#FFF
+    classDef DESTINATION fill:#000000,stroke:none,color:#FFF  
 ```
