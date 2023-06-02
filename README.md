@@ -81,7 +81,7 @@ To get the upstream/downstream configuration for the user, your endpoint has to 
 ### authentication backend parameters
 
 | Parameter | Description | Default | Example |
-| --- | --- |
+| --- | --- | --- | --- |
 | `user` | The name of the upstream user | | *root*, *no-standard-username@myserver* |
 | `host` | IP:Port of the upstream server | | *10.0.0.125:22*, *192.168.1.10:678* |
 | `method` | The connection method, either **key** or **password"** | | *key*, *password* |
