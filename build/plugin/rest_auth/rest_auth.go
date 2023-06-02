@@ -17,31 +17,22 @@ type plugin struct {
 	Insecure bool
 }
 
-type piperFrom struct {
-	Method string
-	User string
-}
-
 type piperTo struct {
-	Method string
 	User string
-	Password string
 	Host string
 	AuthorizedKeys string
 	PrivateKey string
 }
 
 func newRestAuthPlugin() *plugin{
-	return &plugin{
-
-	}
+	return &plugin{}
 }
 
 func (p *plugin) supportedMethods() ([]string, error) {
 	set := make(map[string]bool)
 
 	set["publickey"] = true
-	set["password"] = true
+	set["password"] = false
 
 	var methods []string
 	for k := range set {
@@ -66,39 +57,27 @@ func (p *plugin) findAndCreateUpstream(conn libplugin.ConnMetadata, password str
 		var result map[string]interface{}
 		json.Unmarshal([]byte(body), &result)
 
-		from := piperFrom{
-			Method:fmt.Sprint(result["method"]),
+		to := piperTo{
+			User:fmt.Sprint(result["user"]),
+			Host:fmt.Sprint(result["host"]),
+			AuthorizedKeys:fmt.Sprint(result["authorizedKeys"]),
+			PrivateKey:fmt.Sprint(result["privateKey"]),
 		}
-
-		if from.Method == "key" {
-			to := piperTo{
-				User:fmt.Sprint(result["user"]),
-				Host:fmt.Sprint(result["host"]),
-				AuthorizedKeys:fmt.Sprint(result["authorizedKeys"]),
-				PrivateKey:fmt.Sprint(result["privateKey"]),
-			}
-			rest, err := p.strToByte(to.AuthorizedKeys, map[string]string{
-				"DOWNSTREAM_USER": user,
-			})
+		rest, err := p.strToByte(to.AuthorizedKeys, map[string]string{
+			"DOWNSTREAM_USER": user,
+		})
+		if err != nil {
+			return nil, err
+		}
+		var authedPubkey ssh.PublicKey
+		for len(rest) > 0 {
+			authedPubkey, _, _, rest, err = ssh.ParseAuthorizedKey(rest)
 			if err != nil {
 				return nil, err
 			}
-			var authedPubkey ssh.PublicKey
-			for len(rest) > 0 {
-				authedPubkey, _, _, rest, err = ssh.ParseAuthorizedKey(rest)
-				if err != nil {
-					return nil, err
-				}
-				if bytes.Equal(authedPubkey.Marshal(), publicKey) {
-					return p.createUpstream(conn, to, true)
-				}
+			if bytes.Equal(authedPubkey.Marshal(), publicKey) {
+				return p.createUpstream(conn, to)
 			}
-		}else{
-			to := piperTo{
-				User:fmt.Sprint(result["user"]),
-				Password:fmt.Sprint(result["password"]),
-			}
-			return p.createUpstream(conn, to, false)
 		}
 	}else {
 		return nil, err
@@ -106,7 +85,7 @@ func (p *plugin) findAndCreateUpstream(conn libplugin.ConnMetadata, password str
 	return nil, fmt.Errorf("no matching pipe for username [%v] found", user)
 }
 
-func (p *plugin) createUpstream(conn libplugin.ConnMetadata, to piperTo, useKey bool) (*libplugin.Upstream, error) {
+func (p *plugin) createUpstream(conn libplugin.ConnMetadata, to piperTo) (*libplugin.Upstream, error) {
 
 	host, port, err := libplugin.SplitHostPortForSSH(to.Host)
 	if err != nil {
@@ -120,24 +99,18 @@ func (p *plugin) createUpstream(conn libplugin.ConnMetadata, to piperTo, useKey 
 		IgnoreHostKey: true,
 	}
 
-	if useKey {
-		data, err := p.strToByte(to.PrivateKey, map[string]string{
-			"DOWNSTREAM_USER": conn.User(),
-			"UPSTREAM_USER":   to.User,
-		})
-		if err != nil {
-			return nil, err
-		}
-	
-		if data != nil {
-			u.Auth = libplugin.CreatePrivateKeyAuth(data)
-			return u, nil
-		}
-	}else{
-		u.Auth = libplugin.CreatePasswordAuth([]byte(to.Password))
+	data, err := p.strToByte(to.PrivateKey, map[string]string{
+		"DOWNSTREAM_USER": conn.User(),
+		"UPSTREAM_USER":   to.User,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if data != nil {
+		u.Auth = libplugin.CreatePrivateKeyAuth(data)
 		return u, nil
 	}
-	
 
 	return nil, fmt.Errorf("no password or private key found")
 }

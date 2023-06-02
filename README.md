@@ -6,18 +6,29 @@ The rest_challenge plugin will get a challenge from your rest backend and presen
 The rest_auth plugin will get the upstream/downstream configuration from your rest backend
 
 Since the challenge backend is based on your rest webserver, you can add anything you like, from authenticators, SMS OTP, and so on. No need to use any other plugins.
+The auth backend only supporty public key authentication!
 
 ## Usage
 
+Use both the challenge and auth
+
 ```
-sshpiperd rest_challenge --url https://localhost:8443/challenge --insecure  -- rest_auth --url https://localhost:8443/auth --insecure
+sshpiperd rest_challenge --url https://localhost:8443/challenge  -- rest_auth --url https://localhost:8443/auth
 ```
+
+Multi challenge, different endpoints
+
+```
+sshpiperd rest_challenge --url https://localhost:8443/challenge  -- rest_challenge --url https://localhost:8443/v2/challenge  -- rest_auth --url https://localhost:8443/auth
+```
+
+Please make sure the communication between your sshpiper proxy and the REST endpoint is secure (only use SSL/TLS, validate certificate) and do not expose your REST endpoint to any other systems.
 
 ### options
 
 ```
    --url value URL for your rest endpoint, can be anything you like
-   --insecure  allow insecure SSL
+   --insecure  allow insecure SSL (do not validate SSL certificate)
 ```
 
 ## challenge backend: GET https://localhost:8443/challenge/arthur
@@ -60,20 +71,10 @@ To get the upstream/downstream configuration for the user, your endpoint has to 
 {
   "user": "root",
   "host": "192.168.1.1:22",
-  "method": "key",
   "authorizedKeys": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDVEvuHaktOlL+GpF+JUlcX9N2f1b36moKkck7eV8Kgj root@c8e26162952a",
   "privateKey": "-----BEGIN OPENSSH PRIVATE KEY-----\r\nb3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW\r\nQyNTUxOQAAACDacsBgzwtW0WBIVrE/ZVWFr2w2287w1MoVJMueJgog1gAAAJjLTCf6y0wn\r\n+gAAAAtzc2gtZWQyNTUxOQAAACDacsBgzwtW0WBIVrE/ZVWFr2w2287w1MoVJMueJgog1g\r\nAAAEA7WWWE4AN6UIrkjbKa51tyuBNunmGc6W1IhUH0fQ/pz9pywGDPC1bRYEhWsT9lVYWv\r\nbDbbzvDUyhUky54mCiDWAAAAEXJvb3RAODhiNTBkOGM2MDc3AQIDBA==\r\n-----END OPENSSH PRIVATE KEY-----"
 }
 ```
-
-
-```json
-{
-  "user": "root",
-  "host": "192.168.1.1:22",
-  "method": "password",
-  "password": "myVerySecurePassword"
-}
 ```
 
 ### authentication backend parameters
@@ -82,7 +83,5 @@ To get the upstream/downstream configuration for the user, your endpoint has to 
 | --- | --- | --- |
 | `user` | The name of the upstream user | *root*, *no-standard-username@myserver* |
 | `host` | IP:Port of the upstream server | *10.0.0.125:22*, *192.168.1.10:678* |
-| `method` | The connection method, either **key** or **password"** | *key*, *password* |
 | `authorizedKeys` | A list of authorized downstream public keys (can be multiple use \r\n) | *ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AA........* |
 | `privateKey` | The private key for the upstream connection | *-----BEGIN OPENSSH PRIVATE KEY-----\r\nb3BlbnNz.....* |
-| `password` | The password for the upstream connection | *mysecurepassword* |
