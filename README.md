@@ -86,7 +86,7 @@ To get the upstream/downstream configuration for the user, your endpoint has to 
 | `host` | IP:Port of the upstream server | | *10.0.0.125:22*, *192.168.1.10:678* |
 | `method` | The connection method, either **key** or **password"** | | *key*, *password* |
 | `ignoreHostKey` | If to ignore the host key of the upstream server (known_hosts) | true | *true*, *false* |
-| `knownHostKey` | If to ignore the host key of the upstream server (known_hosts) | | *10.29.160.218 ssh-ed25519 AAAAC3NzaC1lZDI1N.....* |
+| `knownHostKey` | If **ignoreHostKey** is false, the known host key | | *10.29.160.218 ssh-ed25519 AAAAC3NzaC1lZDI1N.....* |
 | `authorizedKeys` | A list of authorized downstream public keys (can be multiple use \r\n) | | *ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AA........* |
 | `privateKey` | The private key for the upstream connection | | *-----BEGIN OPENSSH PRIVATE KEY-----\r\nb3BlbnNz.....* |
 | `password` | The password for the upstream connection | | *mysecurepassword* |
