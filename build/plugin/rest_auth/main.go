@@ -42,7 +42,7 @@ func main(){
 				},
 
 				VerifyHostKeyCallback: func(conn libplugin.ConnMetadata, hostname, netaddr string, key []byte) error {
-					return nil
+					return plugin.verifyHostKey(conn, hostname, netaddr, key)
 				},
 			}, nil
 		},

@@ -61,7 +61,6 @@ To get the upstream/downstream configuration for the user, your endpoint has to 
   "user": "root",
   "host": "192.168.1.1:22",
   "method": "key",
-  "ignoreHostKey": true,
   "authorizedKeys": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDVEvuHaktOlL+GpF+JUlcX9N2f1b36moKkck7eV8Kgj root@c8e26162952a",
   "privateKey": "-----BEGIN OPENSSH PRIVATE KEY-----\r\nb3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW\r\nQyNTUxOQAAACDacsBgzwtW0WBIVrE/ZVWFr2w2287w1MoVJMueJgog1gAAAJjLTCf6y0wn\r\n+gAAAAtzc2gtZWQyNTUxOQAAACDacsBgzwtW0WBIVrE/ZVWFr2w2287w1MoVJMueJgog1g\r\nAAAEA7WWWE4AN6UIrkjbKa51tyuBNunmGc6W1IhUH0fQ/pz9pywGDPC1bRYEhWsT9lVYWv\r\nbDbbzvDUyhUky54mCiDWAAAAEXJvb3RAODhiNTBkOGM2MDc3AQIDBA==\r\n-----END OPENSSH PRIVATE KEY-----"
 }
@@ -73,20 +72,17 @@ To get the upstream/downstream configuration for the user, your endpoint has to 
   "user": "root",
   "host": "192.168.1.1:22",
   "method": "password",
-  "ignoreHostKey": true,
   "password": "myVerySecurePassword"
 }
 ```
 
 ### authentication backend parameters
 
-| Parameter | Description | Default | Example |
-| --- | --- | --- | --- |
-| `user` | The name of the upstream user | | *root*, *no-standard-username@myserver* |
-| `host` | IP:Port of the upstream server | | *10.0.0.125:22*, *192.168.1.10:678* |
-| `method` | The connection method, either **key** or **password"** | | *key*, *password* |
-| `ignoreHostKey` | If to ignore the host key of the upstream server (known_hosts) | true | *true*, *false* |
-| `knownHostKey` | If **ignoreHostKey** is false, the known host key | | *10.29.160.218 ssh-ed25519 AAAAC3NzaC1lZDI1N.....* |
-| `authorizedKeys` | A list of authorized downstream public keys (can be multiple use \r\n) | | *ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AA........* |
-| `privateKey` | The private key for the upstream connection | | *-----BEGIN OPENSSH PRIVATE KEY-----\r\nb3BlbnNz.....* |
-| `password` | The password for the upstream connection | | *mysecurepassword* |
+| Parameter | Description | Example |
+| --- | --- | --- |
+| `user` | The name of the upstream user | *root*, *no-standard-username@myserver* |
+| `host` | IP:Port of the upstream server | *10.0.0.125:22*, *192.168.1.10:678* |
+| `method` | The connection method, either **key** or **password"** | *key*, *password* |
+| `authorizedKeys` | A list of authorized downstream public keys (can be multiple use \r\n) | *ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AA........* |
+| `privateKey` | The private key for the upstream connection | *-----BEGIN OPENSSH PRIVATE KEY-----\r\nb3BlbnNz.....* |
+| `password` | The password for the upstream connection | *mysecurepassword* |

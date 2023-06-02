@@ -27,7 +27,6 @@ type piperTo struct {
 	User string
 	Password string
 	Host string
-	IgnoreHostKey bool
 	AuthorizedKeys string
 	PrivateKey string
 }
@@ -75,7 +74,6 @@ func (p *plugin) findAndCreateUpstream(conn libplugin.ConnMetadata, password str
 			to := piperTo{
 				User:fmt.Sprint(result["user"]),
 				Host:fmt.Sprint(result["host"]),
-				IgnoreHostKey:p.fromJsonBool(fmt.Sprint(result["ignoreHostKey"])),
 				AuthorizedKeys:fmt.Sprint(result["authorizedKeys"]),
 				PrivateKey:fmt.Sprint(result["privateKey"]),
 			}
@@ -99,7 +97,6 @@ func (p *plugin) findAndCreateUpstream(conn libplugin.ConnMetadata, password str
 			to := piperTo{
 				User:fmt.Sprint(result["user"]),
 				Password:fmt.Sprint(result["password"]),
-				IgnoreHostKey:p.fromJsonBool(fmt.Sprint(result["ignoreHostKey"])),
 			}
 			return p.createUpstream(conn, to, false)
 		}
@@ -120,7 +117,7 @@ func (p *plugin) createUpstream(conn libplugin.ConnMetadata, to piperTo, useKey 
 		Host:          host,
 		Port:          int32(port),
 		UserName:      to.User,
-		IgnoreHostKey: to.IgnoreHostKey,
+		IgnoreHostKey: true,
 	}
 
 	if useKey {
@@ -145,13 +142,6 @@ func (p *plugin) createUpstream(conn libplugin.ConnMetadata, to piperTo, useKey 
 	return nil, fmt.Errorf("no password or private key found")
 }
 
-func (p *plugin) strToByte(cert string, vars map[string]string) ([]byte, error) {
-	return []byte(cert), nil
-}
-
-func (p *plugin) fromJsonBool(b string) (bool) {
-	if b == "true"{
-		return true
-	}
-	return false
+func (p *plugin) strToByte(str string, vars map[string]string) ([]byte, error) {
+	return []byte(str), nil
 }
