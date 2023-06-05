@@ -18,42 +18,40 @@
     go get github.com/fatih/color; \
     rm -rf /go/sshpiper/plugin/kubernetes; \
     rm -rf /go/sshpiper/plugin/workingdir; \
+    go get -u all; \
     go build -o /usr/local/bin ./cmd/...; \
     go build -o /usr/local/bin ./plugin/...;
 
 
 # :: Header
   FROM 11notes/alpine:stable
-  ENV LANG C.UTF-8
-  ENV LC_ALL C.UTF-8
-  ENV FORCE_COLOR 1
   COPY --from=build /usr/local/bin/ /usr/local/bin
 
 # :: Run
   USER root
 
-  # :: prepare
-  RUN set -ex; \
-    apk add --update --no-cache \
-      curl \
-      openssh-keygen; \
-    apk upgrade; \
-    mkdir -p /sshpiderd/etc; \
-    mkdir -p /sshpiderd/var; \
-    mkdir -p /etc/ssh;
+  # :: update image
+    RUN set -ex; \
+      apk update; \
+      apk upgrade; \
+      apk add --update --no-cache \
+        openssh-keygen;
 
-  RUN set -ex; \
-    addgroup --gid 1000 -S sshpiperd; \
-    adduser --uid 1000 -D -S -h /sshpiperd -s /sbin/nologin -G sshpiperd sshpiperd;
+  # :: prepare image
+    RUN set -ex; \
+      mkdir -p /sshpiderd/etc; \
+      mkdir -p /sshpiderd/var; \
+      mkdir -p /etc/ssh;
 
-  # :: copy root filesystem changes
+  # :: copy root filesystem changes and add execution rights to init scripts
     COPY ./rootfs /
     RUN set -ex; \
-      chmod +x -R /usr/local/bin
+      chmod +x -R /usr/local/bin;
 
-  # :: docker -u 1000:1000 (no root initiative)
+  # :: change home path for existing user and set correct permission
     RUN set -ex; \
-      chown -R sshpiperd:sshpiperd \
+      usermod -d /sshpiperd docker; \
+      chown -R 1000:1000 \
         /sshpiperd \
         /etc/ssh;
 
@@ -64,5 +62,5 @@
   HEALTHCHECK CMD /usr/local/bin/healthcheck.sh || exit 1
 
 # :: Start
-  USER sshpiperd
+  USER docker
   ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

@@ -1,38 +1,32 @@
-# rest plugin for sshpiperd
+# Alpine :: SSH proxy via sshpiperd & REST
+Run a SSH proxy based on Alpine Linux. Small, lightweight, secure and fast.
 
-The rest plugin for sshpiperd is a simple plugin that allows you to use a restful backend for authentication and challenge
-
-The rest_challenge plugin will get a challenge from your rest backend and present it to the user
-The rest_auth plugin will get the upstream/downstream configuration from your rest backend
-
-Since the challenge backend is based on your rest webserver, you can add anything you like, from authenticators, SMS OTP, and so on. No need to use any other plugins.
+The rest plugin for sshpiperd is a simple plugin that allows you to use a restful backend for authentication and challenge. The rest_challenge plugin will get a challenge from your rest backend and present it to the user. The rest_auth plugin will get the upstream/downstream configuration from your rest backend. Since the challenge backend is based on your rest webserver, you can add anything you like, from authenticators, SMS OTP, and so on. No need to use any other plugins.
 The auth backend only supporty public key authentication!
 
-## Usage
-
-Use both the challenge and auth
-
-```
-sshpiperd rest_challenge --url https://localhost:8443/challenge  -- rest_auth --url https://localhost:8443/auth
-```
-
-Multi challenge, different endpoints
-
-```
-sshpiperd rest_challenge --url https://localhost:8443/challenge  -- rest_challenge --url https://localhost:8443/v2/challenge  -- rest_auth --url https://localhost:8443/auth
+## Run
+```shell
+docker run --name sshpiper \
+  -d 11notes/sshpiper:[tag] \
+    sshpiperd \
+      rest_challenge --url https://localhost:8443/challenge  -- \
+      rest_auth --url https://localhost:8443/auth
 ```
 
-Please make sure the communication between your sshpiper proxy and the REST endpoint is secure (only use SSL/TLS, validate certificate) and do not expose your REST endpoint to any other systems.
+## Defaults
+| Parameter | Value | Description |
+| --- | --- | --- |
+| `user` | docker | user docker |
+| `uid` | 1000 | user id 1000 |
+| `gid` | 1000 | group id 1000 |
 
-### options
-
+### Options
 ```
    --url value URL for your rest endpoint, can be anything you like
    --insecure  allow insecure SSL (do not validate SSL certificate)
 ```
 
-## challenge backend: GET https://localhost:8443/challenge/arthur
-
+## Challenge backend: GET https://localhost:8443/challenge/arthur
 Upon connection the challenge plugin will send a get request to your endpoint with the /username in the URL that is connecting from the downstream. The content of "message" is then displayed to the user in the session.
 
 ```json
@@ -41,8 +35,7 @@ Upon connection the challenge plugin will send a get request to your endpoint wi
 }
 ```
 
-## challenge backend: POST https://localhost:8443/challenge/arthur
-
+## Challenge backend: POST https://localhost:8443/challenge/arthur
 The user types his response and after hitting enter the plugin will send a post request to your endpoint including /username in the URL. The following data is sent back to your endpoint.
 
 ```json
@@ -60,8 +53,7 @@ The response is either true or false
 }
 ```
 
-## skip challenge backend: GET https://localhost:8443/challenge/arthur
-
+## Skip challenge backend: GET https://localhost:8443/challenge/arthur
 You can skip the challenge for a specific connection if you like. For that, instead of sending back the “message” at the first request, just send back the following data.
 
 ```json
@@ -70,8 +62,7 @@ You can skip the challenge for a specific connection if you like. For that, inst
 }
 ```
 
-## authentication backend: GET https://localhost:8443/auth/arthur
-
+## Authentication backend: GET https://localhost:8443/auth/arthur
 To get the upstream/downstream configuration for the user, your endpoint has to send back the following data. You can either use key authentication or password authentication.
 
 ```json
@@ -83,8 +74,7 @@ To get the upstream/downstream configuration for the user, your endpoint has to 
 }
 ```
 
-### authentication backend parameters
-
+### Authentication backend parameters
 | Parameter | Description | Example |
 | --- | --- | --- |
 | `user` | The name of the upstream user | *root*, *no-standard-username@myserver* |
@@ -93,7 +83,7 @@ To get the upstream/downstream configuration for the user, your endpoint has to 
 | `privateKey` | The private key for the upstream connection | *-----BEGIN OPENSSH PRIVATE KEY-----\r\nb3BlbnNz.....* |
 
 
-# express example
+# Express example
 ```js
 ...
 app.get('/:user', (req, res, next) => {
@@ -109,8 +99,7 @@ app.post('/:user', (req, res, next) => {
 ...
 ```
 
-# possible high-available solution
-
+# Possible high-available solution
 This is a possible scenario on how to implement a high-available sshpiper infrastructure (running on multiple nodes). As LB you could use haproxy or traefik, both using sticky sessions for the sshpiper part.
 
 ```mermaid
@@ -133,3 +122,11 @@ flowchart TD
     classDef REST fill:#9900CC,stroke:none,color:#FFF
     classDef DESTINATION fill:#000000,stroke:none,color:#FFF  
 ```
+
+## Built with
+* [sshpiper](https://github.com/tg123/sshpiper)
+* [Alpine Linux](https://alpinelinux.org/)
+
+## Tipps
+* Don't bind to ports < 1024 (requires root), use NAT/reverse proxy
+* [Permanent Stroage](https://github.com/11notes/alpine-docker-netshare) - Module to store permanent container data via NFS/CIFS and more
