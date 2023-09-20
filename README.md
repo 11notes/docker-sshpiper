@@ -1,8 +1,10 @@
 # Alpine :: SSH proxy via sshpiperd & REST
-Run a SSH proxy based on Alpine Linux. Small, lightweight, secure and fast.
+![pulls](https://img.shields.io/docker/pulls/11notes/sshpiperd?color=2b75d6) ![build](https://img.shields.io/docker/automated/11notes/sshpiperd?color=2b75d6) ![activity](https://img.shields.io/github/commit-activity/m/11notes/docker-sshpiperd?color=c91cb8) ![commit-last](https://img.shields.io/github/last-commit/11notes/docker-sshpiperd?color=c91cb8)
+
+Run a SSH proxy based on Alpine Linux. Small, lightweight, secure and fast 🏔️
 
 The rest plugin for sshpiperd is a simple plugin that allows you to use a restful backend for authentication and challenge. The rest_challenge plugin will get a challenge from your rest backend and present it to the user. The rest_auth plugin will get the upstream/downstream configuration from your rest backend. Since the challenge backend is based on your rest webserver, you can add anything you like, from authenticators, SMS OTP, and so on. No need to use any other plugins.
-The auth backend only supporty public key authentication!
+The auth backend only supports public key authentication!
 
 ## Run
 ```shell
@@ -19,6 +21,16 @@ docker run --name sshpiper \
 | `user` | docker | user docker |
 | `uid` | 1000 | user id 1000 |
 | `gid` | 1000 | group id 1000 |
+| `home` | /sshpiperd | home directory of user docker |
+
+## Environment
+| Parameter | Value | Default |
+| --- | --- | --- |
+| `SSHPIPERD_SERVER_KEY` | ed25519 server key | /etc/ssh/ssh_host_ed25519_key |
+| `REST_CHALLENGE_URL` | URL to call for the challenge | "" |
+| `REST_CHALLENGE_INSECURE` | validate SSL certificate | "" |
+| `REST_AUTH_URL` | URL to call for the authentication | "" |
+| `REST_AUTH_INSECURE` | validate SSL certificate | "" |
 
 ### Options
 ```
@@ -127,6 +139,6 @@ flowchart TD
 * [sshpiper](https://github.com/tg123/sshpiper)
 * [Alpine Linux](https://alpinelinux.org/)
 
-## Tipps
-* Don't bind to ports < 1024 (requires root), use NAT/reverse proxy
-* [Permanent Stroage](https://github.com/11notes/alpine-docker-netshare) - Module to store permanent container data via NFS/CIFS and more
+## Tips
+* Only use rootless container runtime (podman, rootless docker)
+* Don't bind to ports < 1024 (requires root), use NAT/reverse proxy (haproxy, traefik, nginx)

@@ -1,6 +1,6 @@
 # :: Builder
   FROM golang:alpine as build
-  ENV checkout=v1.0.105
+  ENV checkout=v1.2.3
 
   RUN set -ex; \
     apk add --update --no-cache \
@@ -25,6 +25,7 @@
 
 # :: Header
   FROM 11notes/alpine:stable
+  ENV APP_ROOT=/sshpiperd
   COPY --from=build /usr/local/bin/ /usr/local/bin
 
 # :: Run
@@ -32,15 +33,14 @@
 
   # :: update image
     RUN set -ex; \
-      apk update; \
-      apk upgrade; \
-      apk add --update --no-cache \
-        openssh-keygen;
+      apk add --no-cache \
+        openssh-keygen; \
+      apk --no-cache upgrade;
 
   # :: prepare image
     RUN set -ex; \
-      mkdir -p /sshpiderd/etc; \
-      mkdir -p /sshpiderd/var; \
+      mkdir -p ${APP_ROOT}/etc; \
+      mkdir -p ${APP_ROOT}/var; \
       mkdir -p /etc/ssh;
 
   # :: copy root filesystem changes and add execution rights to init scripts
@@ -50,13 +50,13 @@
 
   # :: change home path for existing user and set correct permission
     RUN set -ex; \
-      usermod -d /sshpiperd docker; \
+      usermod -d ${APP_ROOT} docker; \
       chown -R 1000:1000 \
-        /sshpiperd \
+        ${APP_ROOT} \
         /etc/ssh;
 
 # :: Volumes
-  VOLUME ["/sshpiderd/var"]
+  VOLUME ["${APP_ROOT}/var"]
 
 # :: Monitor
   HEALTHCHECK CMD /usr/local/bin/healthcheck.sh || exit 1
