@@ -1,5 +1,5 @@
 # Alpine :: SSH proxy via sshpiperd & REST
-![pulls](https://img.shields.io/docker/pulls/11notes/sshpiperd?color=2b75d6) ![build](https://img.shields.io/docker/automated/11notes/sshpiperd?color=2b75d6) ![activity](https://img.shields.io/github/commit-activity/m/11notes/docker-sshpiperd?color=c91cb8) ![commit-last](https://img.shields.io/github/last-commit/11notes/docker-sshpiperd?color=c91cb8)
+![pulls](https://img.shields.io/docker/pulls/11notes/sshpiper?color=2b75d6) ![build](https://img.shields.io/docker/automated/11notes/sshpiper?color=2b75d6) ![activity](https://img.shields.io/github/commit-activity/m/11notes/docker-sshpiper?color=c91cb8) ![commit-last](https://img.shields.io/github/last-commit/11notes/docker-sshpiper?color=c91cb8)
 
 Run a SSH proxy based on Alpine Linux. Small, lightweight, secure and fast 🏔️
 
