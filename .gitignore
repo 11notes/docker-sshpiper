@@ -1,2 +1,8 @@
+# default
 maintain/
-run/
+node_modules/
+
+# custom
+.env
+ssh_host_ed25519_key.txt
+authorized_keys.txt

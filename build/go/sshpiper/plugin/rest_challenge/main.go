@@ -1,3 +1,5 @@
+//go:build full || rest
+
 package main
 
 import (

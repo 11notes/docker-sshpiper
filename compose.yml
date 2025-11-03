@@ -1,0 +1,117 @@
+name: "ssh"
+
+x-lockdown: &lockdown
+  # prevents write access to the image itself
+  read_only: true
+  # prevents any process within the container to gain more privileges
+  security_opt:
+    - "no-new-privileges=true"
+
+services:
+  socket-proxy:
+    # for more information about this image checkout:
+    # https://github.com/11notes/docker-socket-proxy
+    image: "11notes/socket-proxy:2.1.6"
+    <<: *lockdown
+    user: "0:103"
+    environment:
+      TZ: "Europe/Zurich"
+    volumes:
+      - "/run/docker.sock:/run/docker.sock:ro" 
+      - "socket-proxy.run:/run/proxy"
+    restart: "always"
+
+  sshpiper:
+    depends_on:
+      socket-proxy:
+        condition: "service_healthy"
+        restart: true
+    image: "11notes/sshpiper:1.5.0"
+    <<: *lockdown
+    environment:
+      TZ: "Europe/Zurich"
+    command:
+      - "docker"
+      - "--"
+      - "failtoban"
+      - "--max-failures=3"
+      - "--ban-duration=6h"
+      # if using failtoban, ignore localhost or the healtcheck will be banned!
+      - "--ignore-ip=127.0.0.1"
+    ports:
+      - "8022:22/tcp"
+    volumes:
+      - "socket-proxy.run:/var/run"
+    networks:
+      frontend:
+      backend:
+    secrets:
+      - "ssh_host_key"
+    sysctls:
+      # allow rootless container to access ports < 1024
+      net.ipv4.ip_unprivileged_port_start: 22
+    restart: "always"
+
+  sftp:
+    # for more information about this image checkout:
+    # https://github.com/11notes/docker-sftp
+    image: "11notes/sftp:10.2"
+    <<: *lockdown
+    labels:
+      - "sshpiper.username=foo"
+    environment:
+      TZ: "Europe/Zurich"
+      SSH_USER: "foo"
+      SSH_PASSWORD: "${SSH_PASSWORD}"
+    volumes:
+      - "foo.var:/home"
+    tmpfs:
+      - "/run/ssh:uid=1000,gid=1000,size=1m"
+    secrets:
+      - "ssh_host_key"
+    networks:
+      backend:
+    sysctls:
+      net.ipv4.ip_unprivileged_port_start: 22
+    restart: "always"
+
+  sftp-key:
+    # for more information about this image checkout:
+    # https://github.com/11notes/docker-sftp
+    image: "11notes/sftp:10.2"
+    <<: *lockdown
+    labels:
+      - "sshpiper.authorized_keys=${SFTP_AUTHORIZED_KEY}"
+      - "sshpiper.private_key=${SFTP_PRIVATE_KEY}"
+    environment:
+      TZ: "Europe/Zurich"
+      SSH_USER: "bar"
+    volumes:
+      - "bar.var:/home"
+    tmpfs:
+      - "/run/ssh:uid=1000,gid=1000,size=1m"
+    secrets:
+      - "ssh_host_key"
+      - "authorized_keys"
+    networks:
+      backend:
+    sysctls:
+      net.ipv4.ip_unprivileged_port_start: 22
+    restart: "always"
+
+volumes:
+  socket-proxy.run:
+  sshpiper.var:
+  foo.var:
+  bar.var:
+
+networks:
+  frontend:
+  backend:
+    internal: true
+
+secrets:
+  ssh_host_key:
+    file: "./ssh_host_ed25519_key.txt"
+  authorized_keys:
+    file: "./authorized_keys.txt"
