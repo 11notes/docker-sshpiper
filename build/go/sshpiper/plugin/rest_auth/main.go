@@ -13,18 +13,18 @@ func main(){
 
 	libplugin.CreateAndRunPluginTemplate(&libplugin.PluginTemplate{
 		Name:  "rest_auth",
-		Usage: "sshpiperd rest_auth --url https://localhost:8443/challenge",
+		Usage: "sshpiperd rest_auth --url https://localhost:8443/auth",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:				"url",
-				Usage:   		"URL to a REST endpoint (ie. https://domain.com/v1/sshpiperd/challenge) to challenge the connection",
-				Value:   		"https://localhost:8443/challenge",
+				Usage:   		"URL to a REST endpoint (ie. https://domain.com/v1/sshpiperd/auth) to authenticate the connection",
+				Value:   		"https://localhost:8443/auth",
 				EnvVars: []string{"REST_AUTH_URL"},
 				Destination: &plugin.URL,
 			},
 			&cli.BoolFlag{
 				Name:        "insecure",
-				Usage:       "Disable SSL/TLS verification on challenge endpoint",
+				Usage:       "Disable SSL/TLS verification on auth endpoint",
 				EnvVars:     []string{"REST_AUTH_INSECURE"},
 				Destination: &plugin.Insecure,
 			},
