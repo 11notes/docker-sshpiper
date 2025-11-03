@@ -14,6 +14,8 @@ ${{ github:> }}* ... this image is very small
 
 If you value security, simplicity and optimizations to the extreme, then this image might be for you.
 
+${{ content_comparison }}
+
 ${{ title_volumes }}
 * **${{ json_root }}/var** - Directory for screen recordings and other stuff (if used)
 
