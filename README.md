@@ -7,7 +7,7 @@ Run sshpiper rootless and distroless.
 
 # INTRODUCTION 📢
 
-[sshpiper](https://github.com/tg123/sshpiper) (created by [sshpiper](https://github.com/tg123)) is the reverse proxy for sshd. all protocols, including ssh, scp, port forwarding, running on top of ssh are supported.
+[sshpiper](https://github.com/tg123/sshpiper) (created by [tg123](https://github.com/tg123)) is the reverse proxy for sshd. all protocols, including ssh, scp, port forwarding, running on top of ssh are supported.
 
 # SYNOPSIS 📖
 **What can I do with this?** This image will run sshpiper [rootless](https://github.com/11notes/RTFM/blob/main/linux/container/image/rootless.md) and [distroless](https://github.com/11notes/RTFM/blob/main/linux/container/image/distroless.md), for maximum security and performance. In addition to being small and secure, it also offers two additional plugins (rest_auth and rest_challenge) which allow you to use any backend for authentication and challenges.
@@ -27,8 +27,16 @@ Run sshpiper rootless and distroless.
 
 If you value security, simplicity and optimizations to the extreme, then this image might be for you.
 
+# COMPARISON 🏁
+Below you find a comparison between this image and the most used or original one.
+
+| **image** | **size on disk** | **init default as** | **[distroless](https://github.com/11notes/RTFM/blob/main/linux/container/image/distroless.md)** | supported architectures
+| ---: | ---: | :---: | :---: | :---: |
+| 11notes/sshpiper:1.5.0 | 96MB | 1000:1000 | ✅ | amd64, arm64, armv7 |
+| tg123/sshpiperd:full | 137MB | 1000:1000 | ❌ | amd64, arm64 |
+
 # VOLUMES 📁
-* **//var** - Directory for screen recordings and other stuff (if used)
+* **/sshpiper/var** - Directory for screen recordings and other stuff (if used)
 
 # COMPOSE ✂️
 ```yaml
@@ -158,7 +166,7 @@ To find out how you can change the default UID/GID of this container image, cons
 | `user` | docker | user name |
 | `uid` | 1000 | [user identifier](https://en.wikipedia.org/wiki/User_identifier) |
 | `gid` | 1000 | [group identifier](https://en.wikipedia.org/wiki/Group_identifier) |
-| `home` | / | home directory of user docker |
+| `home` | /sshpiper | home directory of user docker |
 | `--server-key` | /run/secrets/ssh_host_key | SSH host key |
 | `--log-format` | json | json output to console |
 | `--log-level` | info | log verbosity level |
@@ -209,4 +217,4 @@ docker pull quay.io/11notes/sshpiper:1.5.0
 # ElevenNotes™️
 This image is provided to you at your own risk. Always make backups before updating an image to a different version. Check the [releases](https://github.com/11notes/docker-sshpiper/releases) for breaking changes. If you have any problems with using this image simply raise an [issue](https://github.com/11notes/docker-sshpiper/issues), thanks. If you have a question or inputs please create a new [discussion](https://github.com/11notes/docker-sshpiper/discussions) instead of an issue. You can find all my other repositories on [github](https://github.com/11notes?tab=repositories).
 
-*created 03.11.2025, 22:16:03 (CET)*
+*created 03.11.2025, 23:30:12 (CET)*
