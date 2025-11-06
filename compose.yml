@@ -26,7 +26,7 @@ services:
       socket-proxy:
         condition: "service_healthy"
         restart: true
-    image: "11notes/sshpiper:1.5.0"
+    image: "11notes/sshpiper:2025.10.15"
     <<: *lockdown
     environment:
       TZ: "Europe/Zurich"
