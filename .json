@@ -6,7 +6,7 @@
     "version": "1.5.0"
   },
   "readme": {
-    "description": "Run sshpiper rootless and distroless.",
+    "description": "run sshpiper rootless and distroless.",
     "introduction": "[sshpiper](https://github.com/tg123/sshpiper) (created by [tg123](https://github.com/tg123)) is the reverse proxy for sshd. all protocols, including ssh, scp, port forwarding, running on top of ssh are supported.",
     "built": {
       "tg123/sshpiper": "https://github.com/tg123/sshpiper"
