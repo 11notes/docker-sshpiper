@@ -3,7 +3,7 @@
   "name": "sshpiper",
   "root": "/sshpiper",
   "semver": {
-    "version": "1.5.1"
+    "version": "1.5.2"
   },
   "readme": {
     "description": "run sshpiper rootless and distroless.",
