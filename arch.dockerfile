@@ -4,9 +4,7 @@
 # GLOBAL
   ARG APP_UID= \
       APP_GID= \
-      APP_GO_VERSION=0 \
-      BUILD_ROOT=/go/sshpiper \
-      BUILD_SRC=tg123/sshpiper.git
+      APP_GO_VERSION=0
 
 # :: FOREIGN IMAGES
   FROM 11notes/distroless AS distroless
@@ -27,11 +25,14 @@
 # :: SSHPIPER
   FROM 11notes/go:${APP_GO_VERSION} AS build
   ARG APP_VERSION \
-      BUILD_ROOT \
-      BUILD_SRC
+      BUILD_ROOT=/go/sshpiper \
+      BUILD_SRC=tg123/sshpiper.git
 
   RUN set -ex; \
     eleven git clone ${BUILD_SRC} v${APP_VERSION};
+
+  RUN set -ex; \
+    eleven patchGoMod ${BUILD_ROOT}/go.mod "google.golang.org/grpc|v1.79.3|CVE-2026-33186";
 
   COPY ./build/go/sshpiper /go/sshpiper
 
