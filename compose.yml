@@ -8,19 +8,6 @@ x-lockdown: &lockdown
     - "no-new-privileges=true"
 
 services:
-  socket-proxy:
-    # for more information about this image checkout:
-    # https://github.com/11notes/docker-socket-proxy
-    image: "11notes/socket-proxy:2.1.6"
-    <<: *lockdown
-    user: "0:103"
-    environment:
-      TZ: "Europe/Zurich"
-    volumes:
-      - "/run/docker.sock:/run/docker.sock:ro" 
-      - "socket-proxy.run:/run/proxy"
-    restart: "always"
-
   sshpiper:
     depends_on:
       socket-proxy:
@@ -50,6 +37,19 @@ services:
     sysctls:
       # allow rootless container to access ports < 1024
       net.ipv4.ip_unprivileged_port_start: 22
+    restart: "always"
+
+  socket-proxy:
+    # for more information about this image checkout:
+    # https://github.com/11notes/docker-socket-proxy
+    image: "11notes/socket-proxy:2.1.6"
+    <<: *lockdown
+    user: "0:103"
+    environment:
+      TZ: "Europe/Zurich"
+    volumes:
+      - "/run/docker.sock:/run/docker.sock:ro" 
+      - "socket-proxy.run:/run/proxy"
     restart: "always"
 
   sftp:
