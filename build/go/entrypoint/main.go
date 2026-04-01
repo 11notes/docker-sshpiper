@@ -2,14 +2,12 @@ package main
 
 import (
 	"os"
-	"syscall"
 
-	"github.com/11notes/go"
+	"github.com/11notes/go-eleven"
 )
 
-var(
-	Eleven eleven.New = eleven.New{}
-)
+const APP_ROOT = "/usr/local/bin"
+const APP_BIN = "sshpiperd"
 
 func main(){
 	// enable environment variable DEBUG
@@ -18,11 +16,6 @@ func main(){
 		logLevel = "debug"
 	}
 
-	// set default parameters for sshpiperd
-	cmd := Eleven.Container.Command([]string{"/usr/local/bin/sshpiperd", "--server-key", "/run/secrets/ssh_host_key", "--log-format", "json", "--drop-hostkeys-message", "--reply-ping", "--port", "22", "--log-level", logLevel})
-
-	// fork to foreground
-	if err := syscall.Exec("/usr/local/bin/sshpiperd", cmd, os.Environ()); err != nil {
-		os.Exit(1)
-	}
+	// run app
+	eleven.Container.Run(APP_ROOT, APP_BIN, []string{"/usr/local/bin/sshpiperd", "--server-key", "/run/secrets/ssh_host_key", "--log-format", "json", "--drop-hostkeys-message", "--reply-ping", "--port", "22", "--log-level", logLevel})
 }
