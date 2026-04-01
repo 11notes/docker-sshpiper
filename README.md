@@ -1,7 +1,7 @@
-![banner](https://raw.githubusercontent.com/11notes/static/refs/heads/main/img/banner/README.png)
+![banner](https://raw.githubusercontent.com/11notes/static/refs/heads/master/img/banner/README.png)
 
 # SSHPIPER
-![size](https://img.shields.io/badge/image_size-113MB-green?color=%2338ad2d)![5px](https://raw.githubusercontent.com/11notes/static/refs/heads/main/img/markdown/transparent5x2px.png)![pulls](https://img.shields.io/docker/pulls/11notes/sshpiper?color=2b75d6)![5px](https://raw.githubusercontent.com/11notes/static/refs/heads/main/img/markdown/transparent5x2px.png)[<img src="https://img.shields.io/github/issues/11notes/docker-sshpiper?color=7842f5">](https://github.com/11notes/docker-sshpiper/issues)![5px](https://raw.githubusercontent.com/11notes/static/refs/heads/main/img/markdown/transparent5x2px.png)![swiss_made](https://img.shields.io/badge/Swiss_Made-FFFFFF?labelColor=FF0000&logo=data:image/svg%2bxml;base64,PHN2ZyB2ZXJzaW9uPSIxIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDMyIDMyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDxyZWN0IHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0idHJhbnNwYXJlbnQiLz4KICA8cGF0aCBkPSJtMTMgNmg2djdoN3Y2aC03djdoLTZ2LTdoLTd2LTZoN3oiIGZpbGw9IiNmZmYiLz4KPC9zdmc+)
+![size](https://img.shields.io/badge/image_size-113MB-green?color=%2338ad2d)![5px](https://raw.githubusercontent.com/11notes/static/refs/heads/master/img/markdown/transparent5x2px.png)![pulls](https://img.shields.io/docker/pulls/11notes/sshpiper?color=2b75d6)![5px](https://raw.githubusercontent.com/11notes/static/refs/heads/master/img/markdown/transparent5x2px.png)[<img src="https://img.shields.io/github/issues/11notes/docker-sshpiper?color=7842f5">](https://github.com/11notes/docker-sshpiper/issues)![5px](https://raw.githubusercontent.com/11notes/static/refs/heads/master/img/markdown/transparent5x2px.png)![swiss_made](https://img.shields.io/badge/Swiss_Made-FFFFFF?labelColor=FF0000&logo=data:image/svg%2bxml;base64,PHN2ZyB2ZXJzaW9uPSIxIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDMyIDMyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDxyZWN0IHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0idHJhbnNwYXJlbnQiLz4KICA8cGF0aCBkPSJtMTMgNmg2djdoN3Y2aC03djdoLTZ2LTdoLTd2LTZoN3oiIGZpbGw9IiNmZmYiLz4KPC9zdmc+)
 
 run sshpiper rootless and distroless.
 
@@ -50,19 +50,6 @@ x-lockdown: &lockdown
     - "no-new-privileges=true"
 
 services:
-  socket-proxy:
-    # for more information about this image checkout:
-    # https://github.com/11notes/docker-socket-proxy
-    image: "11notes/socket-proxy:2.1.6"
-    <<: *lockdown
-    user: "0:103"
-    environment:
-      TZ: "Europe/Zurich"
-    volumes:
-      - "/run/docker.sock:/run/docker.sock:ro" 
-      - "socket-proxy.run:/run/proxy"
-    restart: "always"
-
   sshpiper:
     depends_on:
       socket-proxy:
@@ -92,6 +79,19 @@ services:
     sysctls:
       # allow rootless container to access ports < 1024
       net.ipv4.ip_unprivileged_port_start: 22
+    restart: "always"
+
+  socket-proxy:
+    # for more information about this image checkout:
+    # https://github.com/11notes/docker-socket-proxy
+    image: "11notes/socket-proxy:2.1.6"
+    <<: *lockdown
+    user: "0:103"
+    environment:
+      TZ: "Europe/Zurich"
+    volumes:
+      - "/run/docker.sock:/run/docker.sock:ro" 
+      - "socket-proxy.run:/run/proxy"
     restart: "always"
 
   sftp:
@@ -225,4 +225,4 @@ This image supports nobody by default. Simply add **-nobody** to any tag and the
 # ElevenNotes™️
 This image is provided to you at your own risk. Always make backups before updating an image to a different version. Check the [releases](https://github.com/11notes/docker-sshpiper/releases) for breaking changes. If you have any problems with using this image simply raise an [issue](https://github.com/11notes/docker-sshpiper/issues), thanks. If you have a question or inputs please create a new [discussion](https://github.com/11notes/docker-sshpiper/discussions) instead of an issue. You can find all my other repositories on [github](https://github.com/11notes?tab=repositories).
 
-*created 11.02.2026, 07:13:13 (CET)*
+*created 01.04.2026, 21:58:11 (CET)*
