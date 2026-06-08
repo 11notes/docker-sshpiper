@@ -17,5 +17,5 @@ func main(){
 	}
 
 	// run app
-	eleven.Container.Run(APP_ROOT, APP_BIN, []string{"/usr/local/bin/sshpiperd", "--server-key", "/run/secrets/ssh_host_key", "--log-format", "json", "--drop-hostkeys-message", "--reply-ping", "--port", "22", "--log-level", logLevel})
+	eleven.Container.Run(APP_ROOT, APP_BIN, eleven.Container.MergeCommand([]string{"--server-key", "/run/secrets/ssh_host_key", "--log-format", "json", "--drop-hostkeys-message", "--reply-ping", "--port", "22", "--log-level", logLevel}), []string{})
 }
