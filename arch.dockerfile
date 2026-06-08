@@ -32,7 +32,9 @@
     eleven git clone ${BUILD_SRC} v${APP_VERSION};
 
   RUN set -ex; \
-    eleven patchGoMod ${BUILD_ROOT}/go.mod "google.golang.org/grpc|v1.79.3|CVE-2026-33186";
+    cd ${BUILD_ROOT}; \
+    eleven go patch google.golang.org/grpc v1.79.3 CVE-2026-33186; \
+    eleven go patch golang.org/x/net v0.55.0 CVE-2026-39821;
 
   COPY ./build/go/sshpiper /go/sshpiper
 
