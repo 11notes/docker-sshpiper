@@ -1,0 +1,19 @@
+apiVersion: v2
+name: sshpiper
+description: run sshpiper rootless and distroless on k8s
+type: application
+version: 0.0.1
+appVersion: "1.5.4"
+
+sources:
+  - https://github.com/11notes/docker-sshpiper
+
+maintainers:
+  - name: 11notes
+    url: https://github.com/11notes
+
+keywords:
+  - "ssh"
+  - "scp"
+  - "reverse proxy"
+  - "sshpiper"

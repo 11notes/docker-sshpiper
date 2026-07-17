@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "sshpiper.fullname" . }}
+  labels:
+    {{- include "sshpiper.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "sshpiper.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "sshpiper.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "sshpiper.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+      - name: sshpiper
+        image: "{{ .Values.image.repository }}:{{ include "sshpiper.imageTag" . }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 10 }}
+        ports:
+          - containerPort: 22
+        env:
+        {{- if .Values.sshpiper.failtoban.enabled }}
+        - name: SSHPIPERD_FAILTOBAN_MAX_FAILURES
+          value: {{ .Values.sshpiper.failtoban.max_failures | quote }}
+        - name: SSHPIPERD_FAILTOBAN_BAN_DURATION
+          value: {{ .Values.sshpiper.failtoban.ban_duration | quote }}
+        {{- end }}
+        {{- if .Values.sshpiper.allowed_proxy_addresses }}
+        - name: SSHPIPERD_ALLOWED_PROXY_ADDRESSES
+          value: {{ .Values.sshpiper.allowed_proxy_addresses | quote }}
+        {{- end }}
+        - name: SSHPIPERD_SERVER_KEY
+          value: "/run/secrets/ssh_host_key"
+        - name: SSHPIPERD_LOG_LEVEL
+          value: {{ .Values.sshpiper.loglevel | quote }}
+        {{- if .Values.sshpiper.bannertext }}
+        - name: SSHPIPERD_BANNERTEXT
+          value: {{ .Values.sshpiper.bannertext | quote }}
+        {{- end }}
+        {{- if .Values.sshpiper.login_grace_time }}
+        - name: SSHPIPERD_LOGIN_GRACE_TIME
+          value: {{ .Values.sshpiper.login_grace_time | quote }}
+        {{- end }}
+        {{- if .Values.sshpiper.kubernetes_all_namespaces }}
+        - name: SSHPIPERD_KUBERNETES_ALL_NAMESPACES
+          value: "true"
+        {{- end }}
+        {{- if .Values.sshpiper.drop_hostkeys_message }}
+        - name: SSHPIPERD_DROP_HOSTKEYS_MESSAGE
+          value: "true"
+        {{- end }}
+        {{- with .Values.sshpiper.extraEnvVars }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        args:
+          {{- include "sshpiper.containerArgs" . | nindent 10 }}
+        volumeMounts:
+        - name: sshpiper-server-key
+          mountPath: "/run/secrets/"
+          readOnly: true
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+      volumes:
+      - name: sshpiper-server-key
+        secret:
+          secretName: {{ include "sshpiper.fullname" . }}-server-key
+          items:
+          - key: server_key
+            path: ssh_host_key
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
