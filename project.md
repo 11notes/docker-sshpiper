@@ -30,6 +30,7 @@ ${{ content_defaults }}
 | `--reply-ping` |  | reply to ping@openssh instead of passing it to upstream |
 
 ${{ content_environment }}
+| `SSHPIPER_PORT` | port used for sshpiper | 22 |
 
 ${{ content_source }}
 
