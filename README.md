@@ -227,4 +227,4 @@ This image supports nobody by default. Simply add **-nobody** to any tag and the
 # ElevenNotes™️
 This image is provided to you at your own risk. Always make backups before updating an image to a different version. Check the [releases](https://github.com/11notes/docker-sshpiper/releases) for breaking changes. If you have any problems with using this image simply raise an [issue](https://github.com/11notes/docker-sshpiper/issues), thanks. If you have a question or inputs please create a new [discussion](https://github.com/11notes/docker-sshpiper/discussions) instead of an issue. You can find all my other repositories on [github](https://github.com/11notes?tab=repositories).
 
-*created 18.08.2026, 10:37:00 (CET)*
+*created 18.08.2026, 11:32:44 (CET)*
