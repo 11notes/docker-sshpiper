@@ -15,9 +15,11 @@
 # ╚═════════════════════════════════════════════════════╝
 # :: ENTRYPOINT
   FROM 11notes/go:${APP_GO_VERSION} AS entrypoint
-  COPY ./build /
+  ARG APP_GO_VERSION
+  COPY ./build/go/entrypoint /go/entrypoint
   RUN set -ex; \
     cd /go/entrypoint; \
+    go mod edit -go=${APP_GO_VERSION}; \
     eleven go build /entrypoint main.go; \
     eleven distroless /entrypoint;
 
@@ -26,7 +28,8 @@
   FROM 11notes/go:${APP_GO_VERSION} AS build
   ARG APP_VERSION \
       BUILD_ROOT=/go/sshpiper \
-      BUILD_SRC=tg123/sshpiper.git
+      BUILD_SRC=tg123/sshpiper.git \
+      BUILD_TMP=/tmp/sshpiper
 
   RUN set -ex; \
     eleven git clone ${BUILD_SRC} v${APP_VERSION};
@@ -39,15 +42,21 @@
   COPY ./build/go/sshpiper /go/sshpiper
 
   RUN set -ex; \
-    cd ${BUILD_ROOT}; \
-    mkdir -p /tmp/sshpiper; \
-    rm -rf ./plugin/simplemath; \
-    go mod tidy; \
-    go build -tags full -ldflags="-extldflags=-static -X main.mainver=${APP_VERSION}" -o /tmp/sshpiper ./cmd/...; \
-    go build -tags full -ldflags="-extldflags=-static" -o /tmp/sshpiper ./plugin/...;
+    mkdir -p ${BUILD_TMP};
 
   RUN set -ex; \
-    cd /tmp/sshpiper; \
+    cd ${BUILD_ROOT}/cmd/sshpiperd; \
+    go mod tidy; \
+    go build -tags full -ldflags="-extldflags=-static -X main.mainver=${APP_VERSION}" -o ${BUILD_TMP} .;
+
+  RUN set -ex; \
+    cd ${BUILD_ROOT}; \
+    rm -rf ./plugin/simplemath; \
+    go mod tidy; \
+    go build -tags full -ldflags="-extldflags=-static" -o ${BUILD_TMP} ./plugin/...;
+
+  RUN set -ex; \
+    cd ${BUILD_TMP}; \
     for BIN in *; do \
       eleven distroless ${BIN}; \
     done;
