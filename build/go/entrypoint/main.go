@@ -2,7 +2,6 @@ package main
 
 import (
 	"os"
-
 	"github.com/11notes/go-eleven"
 )
 
@@ -17,5 +16,5 @@ func main(){
 	}
 
 	// run app
-	eleven.Container.Run(APP_ROOT, APP_BIN, eleven.Container.MergeCommand([]string{"--server-key", "/run/secrets/ssh_host_key", "--log-format", "json", "--drop-hostkeys-message", "--reply-ping", "--port", "22", "--log-level", logLevel}), []string{})
+	eleven.Container.Run(APP_ROOT, APP_BIN, eleven.Container.MergeCommand([]string{"--server-key", "/run/secrets/ssh_host_key", "--log-format", "json", "--drop-hostkeys-message", "--reply-ping", "--port", eleven.Util.GetEnv("SSHPIPER_PORT", "22"), "--log-level", logLevel}), []string{})
 }
