@@ -36,8 +36,10 @@
 
   RUN set -ex; \
     cd ${BUILD_ROOT}; \
-    eleven go patch google.golang.org/grpc v1.79.3 CVE-2026-33186; \
-    eleven go patch golang.org/x/net v0.55.0 CVE-2026-39821;
+    eleven go patch google.golang.org/grpc v1.82.1 CVE-2026-33186; \
+    eleven go patch golang.org/x/net v0.56.0 CVE-2026-39821; \
+    eleven go patch go.opentelemetry.io/otel v1.44.0 CVE-2026-41178; \
+    eleven go patch golang.org/x/text v0.39.0 CVE-2026-56852;
 
   COPY ./build/go/sshpiper /go/sshpiper
 
